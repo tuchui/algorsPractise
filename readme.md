@@ -832,3 +832,198 @@ public static Node removeSpecialValueByStack(Node head, int num) {
 	}
 ```
 
+###### 11 实现单链表的选择排序
+
+要求：额外空间复杂度O(1)
+
+选择排序要点：从未排序的部分中找到最小值，然后放在排好序的尾部
+
+- 获取最小节点的前一个节点
+
+```java
+// 获得最小节点的前一个节点
+	private static Node getSmallPre(Node head) {
+		Node smallPre = null;
+		Node small = head;
+		Node pre = head;
+		Node cur = head.next;
+
+		while (cur != null) {
+			if(cur.data<pre.data){
+				smallPre=pre;
+				small = cur;
+			}
+			pre = cur;
+			cur = cur.next;
+
+		}
+		return smallPre;
+	}
+```
+
+
+
+- 使用链表进行选择排序
+
+  ```java
+  	public static Node selectionSort(Node head) {
+  		if (head == null) {
+  			return null;
+  		}
+  		Node tail = null; //排序部分的尾部
+  		Node cur=head; //未排序的尾部
+  		Node smallPre = null; // 最小节点的前一个节点
+  		Node small=null; //最小节点
+  		while (cur != null) {
+  			small = cur;
+  			// 找到最小节点
+  			smallPre = getSmallPre(cur);
+  			if (smallPre != null) {
+  				small = smallPre.next;
+  				smallPre.next = small.next;
+  			}
+  			// cur==small 则cur节点就是最小节点，然后继续遍历
+  			// cur!=small 则cur节点不是，需继续从cur遍历找到整个未排序部分的最小节点
+  			cur = small == cur ? cur.next : cur;
+  			if (tail == null) {
+  				tail = small;
+  			} else {
+  				tail.next = small;
+  
+  			}
+  			tail = small;
+  		}
+  		return head;
+  	}
+  ```
+
+  ###### 12 一种诡异的删除节点方式
+
+  只给定一个节点node ，不给的头结点 要求删除该节点
+
+  当该节点为null，不能使用复制方式，无法删除
+
+  ```java
+  public static void removeNodeWired(Node node) {
+  		if (node == null) {
+  			return;
+  		}
+  		if (node.next == null) {
+  			throw new RuntimeException("无法删除");
+  		}
+  		//把node.next的节点复制给node 删除node.next
+  		node.data = node.next.data;
+  		node.next = node.next.next;
+  
+  	}
+  ```
+
+  
+
+###### 13 向有序的环形单链表中插入新节点
+
+- 特殊情况 当num 遍历完后 ，没有找到插入的地方，会有两种情况
+
+1 该节点比头结点小
+
+2该节点比头结点大
+
+- 在环形链表中遍历的 cur ！=head
+- pre=head  cur=head.next;
+- 
+
+```java
+//经典实现
+public static Node insertByCircle2(Node head, Node num) {
+		if (head == null) {
+			num.next = num;
+			return num;
+		}
+
+		Node pre = head;
+		Node cur = head.next;
+		while (cur != head) {
+			if (pre.data <= num.data && num.data <= cur.data) {
+				break;
+			}
+			pre = cur;
+			cur = cur.next;
+		}
+		pre.next = num;
+		num.next = cur;
+		return head.data > num.data ? num : head;
+	}
+```
+
+```java
+//自己实现
+public static Node insertByCircle(Node head, Node num) {
+		if (head == null)
+			return null;
+
+		
+		Node cur = head;
+		Node tail = null;
+		// 获取taile节点
+		while (cur.next != head) {
+			cur = cur.next;
+		}
+		tail = cur;
+		cur = tail.next;
+		while (cur != tail) {
+			if (cur.data >= num.data && cur.next.data <= num.data) {
+				//插入节点
+				Node next=cur.next;
+				cur.next=num;
+				num.next=next.next;
+						
+			}
+			cur = cur.next;
+
+		}
+		if (num.data < head.data ) {
+			tail.next = num;
+			num.next = head;
+			head = num;
+		}
+		if (num.data > tail.data) {
+			tail.next=num;
+			num.next=head;
+			tail = num;
+		}
+		return head;
+	}
+```
+
+###### 14 合并两个有序链表 （again）
+
+```java
+public static Node merge(Node head1, Node head2) {
+		if (head1 == null || head2 == null) {
+			return head1 == null ? head2 : head1;
+		}
+		// 头结点为两个中最小的一个
+		Node head = head1.data < head2.data ? head1 : head2;
+		Node cur1 = head == head1 ? head1 : head2;
+		Node cur2 = head == head1 ? head2 : head1;
+		Node pre=null;
+    	//书上 Node next=null;
+		while (cur1 != null && cur2 != null) {
+			if(cur1.data<cur2.data){
+				pre=cur1;
+				cur1 = cur1.next;
+			} else {
+				Node next = cur2.next;
+				pre.next = cur2;
+				cur2.next = cur1;
+				cur2 = next;
+				pre = cur2;
+			}
+		}
+
+		pre.next = cur1 == null ? cur2 : cur1;
+		return head;
+
+	}
+```
+
