@@ -1,6 +1,62 @@
 ####   一 二叉树
 
-##### 一、平衡二叉树
+一 基本二叉树
+
+1 二叉树 前序和中序的非递归便利
+
+```java
+    public static void preOrderUnRecur(Node head) {
+        //1先将头结点压入栈
+        //2 弹出栈顶元素，再将该节点的左右节点压入栈(先右后左)
+        //3 不断重复2 ，直到stack为空
+        if (head == null)
+            return;
+        Stack<Node> stack = new Stack<>();
+        stack.push(head);
+        while (!stack.isEmpty()) {
+            Node cur = stack.pop();
+            System.out.println(cur.data + " ");
+            if (cur.right != null) {
+                stack.push(cur.right);
+            }
+            if (cur.left != null) {
+                stack.push(cur.left);
+            }
+
+        }
+    }
+```
+
+
+
+
+
+```java
+  public static void midOrderUnrecur(Node head) {
+        //1 申请一个栈 cur=head
+        // 2 将栈左子树依次压入 cur=cur.left
+        // 不断重复2，直到cur==null ，弹出node 并打印，并cur=node.right ，继续重复
+        if (head == null)
+            return;
+        Stack<Node> stack = new Stack<>();
+        stack.push(head);
+        while (!stack.isEmpty() || head != null) {
+            if (head!= null) {
+                stack.push(head.left);
+                head = head.left;
+            }else{
+                Node node=stack.pop();
+                System.out.println(node.data);
+                head=node.right;
+            }
+
+        }
+    }
+```
+
+
+
+##### 二、平衡二叉树
 
 
 
@@ -1025,5 +1081,41 @@ public static Node merge(Node head1, Node head2) {
 		return head;
 
 	}
+```
+
+###### 15  左右半区方式重新组合链表
+
+思路：1首先要划分出左右半区 需要声明一个mid变量
+
+​	    2  组合左右两半区
+
+```java
+  public static Node relocate(Node head){
+        if(head==null)
+            return null;
+        //将链表划分左右两半区
+        Node mid=head;
+        Node right=head.next;
+        while(right.next!=null && right.next.next!=null){
+            mid=mid.next;
+            right=right.next.next;
+        }
+        System.out.println("node:"+mid.next.data);
+        Node cur=head;
+        right=mid.next;
+      // 标准写法 
+      // mid.next=null;
+      //while(cur.next!=null)
+        while(cur!=mid){
+            Node next_left=cur.next;
+            Node next_right=right.next;
+            cur.next=right;
+            right.next=next_left;
+            right=next_right;
+            cur=next_left;
+        }
+        cur.next=right;
+        return head;
+    }
 ```
 
