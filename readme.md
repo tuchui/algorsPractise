@@ -1,8 +1,8 @@
 ####   一 二叉树
 
-一 基本二叉树
+##### **一 基本二叉树**
 
-1 二叉树 前序和中序的非递归便利
+###### 1 二叉树 前序和中序的非递归便利
 
 ```java
     public static void preOrderUnRecur(Node head) {
@@ -51,6 +51,139 @@
             }
 
         }
+    }
+```
+
+###### 2 二叉树的序列化和反序列化 again
+
+1 使用递归方式
+
+2 使用层序遍历方式 层序遍历使用了队列
+
+```java
+  /*
+     *@description:将二叉树转换为字符串
+     * # 表示节点为null ,每个节点以 '!' 分割
+     *@params:[head]
+     *@return:java.lang.String
+     *@author:Mao
+     *@date:2019/4/12 8:46
+     **/
+    public static String seriaByPre(Node head) {
+        if (head == null)
+            return "#!";
+        String res = head.data + "!";
+        res += seriaByPre(head.left);
+        res += seriaByPre(head.right);
+        return res;
+    }
+
+    /*
+     *@description:反序列化 将str转换为二叉树
+     *@params:[str]
+     *@return:com.mao.tree.Node
+     *@author:Mao
+     *@date:2019/4/12 8:53
+     **/
+    public static Node reconByPre(String str) {
+        if (str == null)
+            return null;
+        //将str 按照'!'分割成数组
+        String[] strs = str.split("!");
+        Queue<String> queue = new LinkedList<>();
+        for (int i = 0; i < strs.length; i++) {
+            queue.offer(strs[i]);
+        }
+        return reconByPreOrder(queue);
+    }
+
+    /*
+     *@description:前序递归
+     *@params:[strs]
+     *@return:com.mao.tree.Node
+     *@author:Mao
+     *@date:2019/4/12 8:59
+     **/
+    private static Node reconByPreOrder(Queue<String> queue) {
+        String value = queue.poll();
+        if ("#".equals(value)) {
+            return null;
+        }
+        Node node = new Node(Integer.valueOf(value));
+        // 将值与节点的左右子树相连接
+        node.left = reconByPreOrder(queue);
+        node.right = reconByPreOrder(queue);
+        return node;
+    }
+
+```
+
+------
+
+
+
+```java
+  //层序遍历
+    public static String seriaByLevel(Node node) {
+        if (node == null)
+            return "#!";
+        String res = node.data + "!";
+        Queue<Node> queue = new LinkedList<Node>();
+        queue.offer(node);
+        while (!queue.isEmpty()) {
+            Node head = queue.poll();
+            if (head.left != null) {
+                res += head.left.data + "!";
+                queue.offer(head.left);
+            } else {
+                res += "#!";
+            }
+            if (head.right != null) {
+                res += head.right.data + "!";
+                queue.offer(head.right);
+            } else {
+                res += "#!";
+            }
+        }
+        return res;
+    }
+
+    /*
+     *@description:层序遍历反序列化
+     *@params:[args]
+     *@return:void
+     *@author:Mao
+     *@date:2019/4/12 9:55
+     **/
+    public static Node reconByLevel(String str) {
+        if (str == null)
+            return null;
+        String[] strs = str.split("!");
+        int index = 0;
+        Node head = generatedNode(strs[index++]);
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(head);
+        Node node = null;
+        while (!queue.isEmpty()&& index!=strs.length) {
+            node = queue.poll();
+            node.left = generatedNode(strs[index++]);
+            node.right = generatedNode(strs[index++]);
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+
+        }
+        return head;
+    }
+
+    private static Node generatedNode(String str) {
+        if ("#".equals(str)) {
+            return null;
+        }
+        return new Node(Integer.valueOf(str));
     }
 ```
 
