@@ -58,7 +58,7 @@
 
 1 使用递归方式
 
-2 使用层序遍历方式 层序遍历使用了队列
+2 使用**层序遍历**方式 层序遍历使用了队列
 
 ```java
   /*
@@ -184,6 +184,34 @@
             return null;
         }
         return new Node(Integer.valueOf(str));
+    }
+```
+
+###### 3 判断t1树是否全部包括t2树的全部拓扑结构  agiain
+
+注意 ：需检查是否为null
+
+1 先进行 t1树的前序遍历 
+
+2 在与t1 和t2 的每个节点进行比较
+
+```java
+   public static boolean contains(Node t1,Node t2){
+		//需检查t1 是否为null 为null则停止
+        if(t1==null){
+            return false;
+        }
+        return check(t1,t2)|| contains(t1.left,t2)|| contains(t1.right,t2);
+    }
+
+    private static boolean check(Node tt1, Node tt2) {
+        if(tt2==null){
+            return true;
+        }
+        if(tt1==null || tt2.data!=tt1.data){
+            return false;
+        }
+        return check(tt1.left,tt2.left) && check(tt1.right,tt2.right);
     }
 ```
 
