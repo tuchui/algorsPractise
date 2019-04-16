@@ -308,7 +308,48 @@
 
 
 
+###### 7 判断是否为二叉树  +1
 
+判断是否为平衡二叉树 左右子树高度差不大于1
+
+```java
+//boolean res 相当于全局变量
+/* 当不满足时立刻返回
+	if(!res[0])
+	{
+      return level;
+    }
+  */
+
+public static boolean isBanlance(Node head){
+        boolean[] res=new boolean[1];
+        res[0]=true;
+        System.out.println("height:"+getHeight(head,1,res));
+        return res[0];
+    }
+
+    private static int getHeight(Node head, int level, boolean[] res) {
+        if(head==null)
+            return level;
+       int lh= getHeight(head.left,level+1,res);
+        if(!res[0]){
+            return level;
+        }
+        int rh=getHeight(head.right,level+1,res);
+        if(!res[0])
+            return level;
+        if(Math.abs(lh-rh)>1){
+            res[0]=false;
+        }
+        return Math.max(lh,rh);
+    }
+
+    public static void main(String[] args) {
+        String str = "1!2!#!4!#!#!#!";
+        Node head = reconByLevel(str);
+        System.out.println( isBanlance(head));
+    }
+```
 
 
 
