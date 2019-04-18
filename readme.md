@@ -351,6 +351,100 @@ public static boolean isBanlance(Node head){
     }
 ```
 
+###### 8 根据后序数组判断是否为二叉树搜索树
+
+- 根据数组 判断是否为二叉搜索树
+
+  **性质：**依据二叉树后序遍历性质 头结点一定是数组的最后一个元素
+
+  根据平衡二叉树的性质 比头结点大的数组一定在二叉树的右边，
+
+  比头结点小的在二叉树的左边
+
+  **思路：**
+
+   1 声明less 和 more 表示 左右子树的右边界 和 左边界
+
+  2 从start 到 end 开始遍历 找到less 和more
+
+  3 如果 less==-1 或者 more==end 说明 只存在左子树或右子树
+
+  4 若 less==more-1 说明当前左右子树符号条件 分别判断左子树和右子树内部是否满足
+
+  5 终止条件 当 起始位置和终止位置 相等时 则证明符号条件
+
+
+
+```java
+public class IsPostArray {
+    public boolean isPostArray(int[] arrs){
+        if(arrs==null ||arrs.length==0)
+            return false;
+        return  isPost( arrs, 0 , arrs.length-1);
+    }
+    private boolean isPost(int[] arrs, int start, int end) {
+
+        // 整个递归的终止条件
+        if(start==end){
+            return true;
+        }
+        int less=-1; //找到左子树右边界临界点
+        int more=end; //找到右子树最左边
+        //找到左子树的右边界，右子树的左边界
+        for(int i=start;i<end;i++){
+            if(arrs[end]>arrs[i]){
+                less=i;
+            }else {
+                //找到第一个比根节点大的索引
+                more=more==end?i:more;
+            }
+        }
+        //只存在左子树或只存在右子树
+        if(less==-1 || more==end){
+            return isPost(arrs,start,end-1);
+        }
+        //若左边界和右边界-1 相等 则继续遍历，不等直接返回false
+        if(less!=more-1){
+            return false;
+        }
+        //进行左子树和右子树的遍历
+        return isPost(arrs,start,less)&& isPost(arrs,more,end-1);
+    }
+}
+```
+
+
+
+###### 9 根据后序数组重构二叉树
+
+
+
+```java
+
+    public Node postArrayToBST(int[] arrs){
+        if(arrs==null)
+            return null;
+        return  posToBST(arrs,0,arrs.length-1);
+    }
+    private Node posToBST(int[] arrs, int start, int end) {
+            if(start>end)
+                return null;
+            int less=-1;
+            int more=end;
+            Node node=new Node(arrs[end]);
+            for (int i=0;i<arrs.length;i++){
+                if(arrs[end]>arrs[i]){
+                    less=i;
+                }else {
+                    more=more==end?i:more;
+                }
+            }
+            node.left=posToBST(arrs,start,less);
+            node.right=posToBST(arrs,more,end);
+            return node;
+    }
+```
+
 
 
 ------
