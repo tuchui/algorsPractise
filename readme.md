@@ -42,7 +42,7 @@
         stack.push(head);
         while (!stack.isEmpty() || head != null) {
             if (head!= null) {
-                stack.push(head.left);
+                stack.push(head);
                 head = head.left;
             }else{
                 Node node=stack.pop();
@@ -53,6 +53,28 @@
         }
     }
 ```
+
+使用递归方式 不理解
+
+```java
+ 
+    TreeNode prev =null;// 中序遍历这棵树，并保存前驱节点至prev中
+    //使用递归
+    public boolean isValidBST(TreeNode root){
+        if(root != null){
+            if(!isValidBST(root.left))
+                return false;
+            if(prev!=null && root.val<=prev.val){
+                return false;
+             }
+            prev = root;
+            return isValidBST(root.right);
+        }
+        return true;
+    }
+```
+
+
 
 ###### 2 二叉树的序列化和反序列化 again
 
@@ -442,6 +464,107 @@ public class IsPostArray {
             node.left=posToBST(arrs,start,less);
             node.right=posToBST(arrs,more,end);
             return node;
+    }
+```
+
+###### 10  判断一个二叉树是否为完全二叉树
+
+完全二叉树性质 每层节点都得填满 ，运行最后一层右节点为null
+
+思路：
+
+- 1 按照层序遍历
+
+- 2 若当前节点有右子树，无左子树 则 返回false
+
+- 3 若当前节点并不是左右子树都有（有左子树无右子树， 均为左右子树），则后续节点必须为叶子节点
+
+  
+
+```java
+    public boolean isCBT(Node head){
+          if(head==null)
+              return false;
+          Queue<Node> queue=new LinkedList<>();
+  
+          boolean leaf=true;
+          Node left=null;
+          Node right=null;
+  
+          queue.offer(head);
+          while(!queue.isEmpty()){
+              head=queue.poll();
+              left=head.left;
+              right=head.right;
+              
+              if(leaf &&(left!=null || right!=null) || (left==null&&right!=null)){
+                  return false;
+              }
+              if(left!=null){
+                  queue.offer(left);
+              }
+              if(right!=null){
+                  queue.offer(right);
+              }else{
+                  leaf=true;
+              }
+          }
+          return true;
+      }
+```
+
+  
+
+11 判断一个二叉树是否为二叉搜索树
+
+leetcode 98
+
+[Leetcode 参考资料](https://leetcode.com/articles/validate-binary-search-tree/)
+
+思路：进行中序遍历 则搜索二叉树节点值为升序
+
+注意： 搜索二叉树的性质 BST 
+
+​			非递归的中序遍历 
+
+```java
+ public boolean isValidBST(TreeNode root) {
+          Stack<TreeNode> stack=new Stack();
+        double inOrder=-Double.MAX_VALUE;
+        while(!stack.isEmpty() || root!=null){
+            while(root!=null){
+                stack.push(root);
+                root=root.left;
+            }
+            root=stack.pop();
+            if(root.val<=inOrder){
+                return false;
+            }
+            inOrder=root.val;
+            root=root.right;
+        }
+        return true;
+    }
+```
+
+```java
+public boolean isValidBST(TreeNode root) {
+          Stack<TreeNode> stack=new Stack();
+        double inOrder=-Double.MAX_VALUE;
+        while(!stack.isEmpty() || root!=null){
+           if(root!=null){
+                stack.push(root);
+                root=root.left;
+            }else{
+            root=stack.pop();
+            if(root.val<=inOrder){
+                return false;
+            }
+            inOrder=root.val;
+            root=root.right;
+           }
+        }
+        return true;
     }
 ```
 
