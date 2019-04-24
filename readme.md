@@ -601,6 +601,43 @@ public class GenerateBSTByOrderArr {
 
 
 
+###### 13 找到两个节点的最近公共祖先节点 +
+
+不懂
+
+使用后序遍历
+
+```java
+      //使用后序遍历
+        /*
+            1
+          /  \
+         2     3
+       / \    / \
+      4   5  6   7
+                /
+               8
+         */
+    public Node lowestAncestors(Node head,Node o1,Node o2){
+        if(head==null || head==o1 || head==o2){
+            return head;
+        }
+        Node left=lowestAncestors(head.left,o1,o2);
+        Node right=lowestAncestors(head.right,o1,o2);
+        if(left!=null && right!=null){
+            return head;
+        }
+        //若其中有一个为null 不为null记为node 
+        //说明node要么是o1 要么是o2 
+        //或者 是o1 和o2的最近祖先
+        return left!=null?left:right;
+    }
+```
+
+
+
+
+
 ------
 
 
