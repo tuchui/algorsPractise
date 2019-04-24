@@ -515,7 +515,7 @@ public class IsPostArray {
 
   
 
-11 判断一个二叉树是否为二叉搜索树
+###### 11 判断一个二叉树是否为二叉搜索树
 
 leetcode 98
 
@@ -565,6 +565,37 @@ public boolean isValidBST(TreeNode root) {
            }
         }
         return true;
+    }
+```
+
+###### 12 通过有序数组生成平衡搜索二叉树
+
+思路 ： 数组的中间数为二叉树的头结点 ，左侧 为左子树 右侧为右子树
+
+```java
+public class GenerateBSTByOrderArr {
+    public static Node generateBST(int[] arr){
+        if(arr==null){
+            return  null;
+        }
+        return  getBst(arr,0,arr.length-1);   
+    }
+    /*
+    *@description: 使用递归生成平衡搜索二叉树
+    *@params:[arr, i, i1]
+    *@return:com.mao.tree.Node
+    *@author:Mao
+    *@date:2019/4/23 8:31
+    **/
+    private static Node getBst(int[] arr, int start, int end) {
+        if(start> end){
+            return null;
+        }
+        int mid=(start+end)/2;
+        Node node=new Node(arr[mid]);
+        node.left=getBst(arr,start,mid-1);
+        node.right=getBst(arr,mid+1,end);
+        return node;
     }
 ```
 
