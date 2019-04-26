@@ -296,7 +296,7 @@
 
 
 
-###### 4   先序与中序结合构成重构二叉树  
+###### 4   先序与中序结合构成重构二叉树   +
 
  * 时间复杂度： O(n)     p172
  * 在中序数组找位置i过程可以用hash表来实现，复杂度为O(n)
@@ -307,6 +307,75 @@
  * 2 用左子树先序和中序，递归整个过程建立左子树left
  * 3 用右子树的的先序和中序数组，递归右子树right
  * 4 把head左右孩子设为lef 和  right
+
+```java
+   public Node preInToTree(int[] preArr,int[] midArr){
+        if(preArr==null || midArr==null){
+            return null;
+        }
+        //使用HashMap将midArr数组存储
+        HashMap<Integer,Integer> map=new HashMap<>();
+        for (int i=0;i<midArr.length;i++){
+            map.put(midArr[i],i);
+        }
+        return  preTree(preArr,0,preArr.length-1,midArr,0,midArr.length-1,map);
+    }
+    private Node preTree(int[] preArr, int preStart, int preEnd, int[] midArr, int midStart, int midEnd, Map<Integer,
+                Integer> map) {
+            if (preStart> preEnd){
+                return null;
+            }
+            Node head=new Node(preArr[preStart]);
+            int index=map.get(preArr[preStart]);
+            head.left=preTree(preArr,preStart+1,preStart+midEnd-index,midArr,midStart,index-1,map);
+            head.right=preTree(preArr,preStart+index-midStart+1,midEnd,midArr,index+1,midEnd,map);
+            return head;
+    }
+```
+
+###### 4.2 中序与后序构成二叉树
+
+```java
+  public Node inPosToTree(int[] mid,int[] pos){
+        if(mid==null || pos==null){
+            return null;
+        }
+        HashMap<Integer,Integer> map=new HashMap<>();
+        for (int i=0;i<mid.length;i++){
+            map.put(mid[i],i);
+        }
+        return posToTree(pos,0,pos.length-1,mid,0,mid.length-1,map);
+    }
+
+    private Node posToTree(int[] pos, int posStart, int posEnd, int[] mid, int midStart, int midEnd,
+                           HashMap<Integer, Integer> map) {
+        if(posStart>posEnd){
+            return null;
+        }
+        int arr=pos[posEnd];
+        int index=map.get(arr);
+        Node node=new Node(arr);
+        node.left=posToTree(pos,posStart,posStart+index-midStart-1,mid,midStart,index-1,map);
+        node.right=posToTree(pos,posStart+index-midStart,posEnd-1,mid,index+1,midEnd,map);
+        return node;
+    }
+    public static void main(String[] args) {
+        int[] pos=new int[]{4,5,2,6,7,3,1};
+        int[] in=new int[]{4,2,5,1,6,3,7};
+        InPosToTree test=new InPosToTree();
+        Node head=test.inPosToTree(in,pos);
+        test.pre(head);
+    }
+    public void pre(Node head){
+        if (head==null)
+            return;
+        System.out.print(head.data);
+        pre(head.left);
+        pre(head.right);
+    }
+```
+
+
 
 ###### 5 中序与后序结合构成的二叉树
 
