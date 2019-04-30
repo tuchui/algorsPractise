@@ -377,16 +377,72 @@
 
 
 
-###### 5 中序与后序结合构成的二叉树
+###### 5 中序与后序结合构成的二叉树 +1
 
 - 时间复杂度： O(n)
+
 - 思路：
+
 - 1 后序数组的最右边为树的头结点h，中序找到h，假设位置为i。
--    则中序数组中，i 左边数组就是头结点左子树的中序数组，长度为L。
--    则左子树的后序数组就是后序数组的h-L
+
+- 则中序数组中，i 左边数组就是头结点左子树的中序数组，长度为L。
+
+- 则左子树的后序数组就是后序数组的h-L
+
 - 2  用左子树的后序和中序，递归建立左子树left
+
 - 3 用右子树的后序和中序，递归建立右子树right
+
 - 4 把head和左右子树设为left和right
+
+  ```java
+  public class GetPosArray {
+      // 根据先序和中序 设置后序数组的最右边的值，
+      // 然后根据先序和中序的右子树设置后序数组，
+      // 左子树同样
+      public int[] getPostArray(int[] pre,int[] mid){
+          if(pre==null||mid==null){
+              return null;
+          }
+          int len=pre.length;
+          int[] pos=new int[len];
+          HashMap<Integer,Integer> map=new HashMap<>();
+          for (int i=0;i<mid.length;i++){
+              map.put(mid[i],i);
+          }
+          setPos(pre,0,pre.length-1,mid,0,mid.length-1,pos,pos.length-1,map);
+          return pos;
+      }
+      //从右往左依次填写数组pos
+      //posEnd为后序数组该填的位置
+      //返回值为该填的位置
+      private int setPos(int[] pre, int preStart, int preEnd, int[] mid, int midStart, int midEnd, int[] pos,
+                           int posEnd, HashMap<Integer, Integer> map) {
+  
+          if(preStart>preEnd){
+              return posEnd;
+          }
+          pos[posEnd--]=pre[preStart];
+          int index=map.get(pre[preStart]);
+          posEnd= setPos(pre,preStart+index-midStart+1,preEnd,mid,index+1,midEnd,pos,posEnd,map);
+          return setPos(pre,preStart+1,preStart+index-midStart,mid,midStart,index-1,pos,posEnd,map);
+      }
+  
+      public static void main(String[] args) {
+  
+          int[] pre=new int[]{1,2,4,5,3,6,7};
+          int[] in=new int[]{4,2,5,1,6,3,7};
+          GetPosArray arr=new GetPosArray();
+          int[] pos=arr.getPostArray(pre,in);
+          for (int i=0;i<pos.length;i++){
+              System.out.println(pos[i]);
+          }
+      }
+  }
+  
+  ```
+
+  
 
 ###### 6 通过先序和中序数组生成后序数组
 
