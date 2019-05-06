@@ -1731,3 +1731,58 @@ public static Node merge(Node head1, Node head2) {
     }
 ```
 
+##### 八 动态规划
+
+###### 1 爬梯子问题 
+
+leetcode 62
+
+[参考资料](https://segmentfault.com/a/1190000016315625)
+
+[segmentfault参考](https://segmentfault.com/a/1190000016315625)
+
+只能右爬和下爬，输入各自行数和列数，输出需要多种可能性
+
+```java
+
+public class UniquePath{
+    
+    public int uniquePath(int m,int n){
+        int[][] res=new int[m-1][n-1];
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+               if(i==0 ||j==0){
+                    res[i][j]=1;
+                }else{
+                     res[i][j]=res[i-1][j]+res[i][j-1];
+                }
+            }
+        }
+        return res[m-1][n-1];
+    }
+    
+}
+```
+
+- 使用递归方式 保存已有信息（记忆化搜索）
+
+```java
+public class UniquePath{
+  
+     public int uniquePaths(int m, int n) {
+        int[][] memo=new int[m][n];
+        return dfs(m-1,n-1,memo);
+    }
+    public int dfs(int m,int n,int[][] memo){
+        if(memo[m][n]!=0){
+            return memo[m][n];
+        }
+        if( m==0 || n==0){
+            return 1;
+        }
+        memo[m][n]=dfs(m-1,n,memo)+dfs(m,n-1,memo);
+        return memo[m][n];
+    }
+}
+```
+
