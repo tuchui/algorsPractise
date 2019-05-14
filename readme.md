@@ -1786,3 +1786,93 @@ public class UniquePath{
 }
 ```
 
+###### 1.1 爬梯子问题2 
+
+leetcode 70
+
+题目描述： 有n阶台阶 可以爬一阶，也可以爬2阶，计算有多少不同方法
+
+与斐波那契数方法一致
+
+###### 2 斐波那契数
+
+Leetcode 509
+
+- 使用递归
+
+```java
+ public int fib(int n){
+        int[] memo=new int[n+1];
+        return  cal(n,memo);
+    }
+    private  int cal(int n ,int[] memo){
+        if(n==0)
+            return 0;
+        if(n==1){
+            return 1;
+        }
+        if(memo[n]!=0){
+            return memo[n];
+        }
+        return cal(n-1,memo)+cal(n-2,memo);
+    }
+
+    public static void main(String[] args) {
+        Fibonacci sol=new Fibonacci();
+        System.out.println(sol.fib(4));
+    }
+```
+
+###### 3 0-1背包问题
+
+###### 4 股票问题
+
+leetcode 121  Best Time to Buy and Sell Stock
+
+```java
+ //暴力破解 时间复杂度为O(n2)
+    public int maxProfit(int[] prices) {
+        int max=0;
+        for(int i=0;i<prices.length;i++){
+            for (int j=i+1;j<prices.length;j++){
+                int tmp=prices[j]-prices[i];
+                if (tmp>max){
+                    max=tmp;
+                }
+
+            }
+        }
+        return max;
+    }
+    //时间复杂度为O(n)
+    public int maxProfit2(int[] prices){
+        int minPrice=Integer.MAX_VALUE; //最低价格
+        int maxPro=0;//最大利润
+        for (int i=0;i<prices.length;i++){
+            if(prices[i]<minPrice){
+                minPrice=prices[i];
+            }else if(prices[i]-minPrice>maxPro){
+                maxPro=prices[i]-minPrice;
+            }
+        }
+        return maxPro;
+    }
+    //考虑使用动态规划？？
+    public int maxProfit3(int[] prices) {
+        if(prices.length == 0 || prices.length == 1) return 0;
+
+        int maxProfit = 0;
+        int min = prices[0];
+
+        for(int i = 0; i < prices.length; i++) {
+            min = Math.min(min, prices[i]);
+            maxProfit = Math.max(maxProfit, prices[i] - min);
+        }
+
+        return maxProfit;
+    }
+```
+
+###### 5 股票问题2
+
+[csdn参考](https://www.cnblogs.com/bianchengzhuji/p/10539083.html)
