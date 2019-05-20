@@ -296,7 +296,7 @@
 
 
 
-###### 4   先序与中序结合构成重构二叉树  
+###### 4   先序与中序结合构成重构二叉树   +
 
  * 时间复杂度： O(n)     p172
  * 在中序数组找位置i过程可以用hash表来实现，复杂度为O(n)
@@ -308,16 +308,141 @@
  * 3 用右子树的的先序和中序数组，递归右子树right
  * 4 把head左右孩子设为lef 和  right
 
-###### 5 中序与后序结合构成的二叉树
+```java
+   public Node preInToTree(int[] preArr,int[] midArr){
+        if(preArr==null || midArr==null){
+            return null;
+        }
+        //使用HashMap将midArr数组存储
+        HashMap<Integer,Integer> map=new HashMap<>();
+        for (int i=0;i<midArr.length;i++){
+            map.put(midArr[i],i);
+        }
+        return  preTree(preArr,0,preArr.length-1,midArr,0,midArr.length-1,map);
+    }
+    private Node preTree(int[] preArr, int preStart, int preEnd, int[] midArr, int midStart, int midEnd, Map<Integer,
+                Integer> map) {
+            if (preStart> preEnd){
+                return null;
+            }
+            Node head=new Node(preArr[preStart]);
+            int index=map.get(preArr[preStart]);
+            head.left=preTree(preArr,preStart+1,preStart+midEnd-index,midArr,midStart,index-1,map);
+            head.right=preTree(preArr,preStart+index-midStart+1,midEnd,midArr,index+1,midEnd,map);
+            return head;
+    }
+```
+
+###### 4.2 中序与后序构成二叉树
+
+```java
+  public Node inPosToTree(int[] mid,int[] pos){
+        if(mid==null || pos==null){
+            return null;
+        }
+        HashMap<Integer,Integer> map=new HashMap<>();
+        for (int i=0;i<mid.length;i++){
+            map.put(mid[i],i);
+        }
+        return posToTree(pos,0,pos.length-1,mid,0,mid.length-1,map);
+    }
+
+    private Node posToTree(int[] pos, int posStart, int posEnd, int[] mid, int midStart, int midEnd,
+                           HashMap<Integer, Integer> map) {
+        if(posStart>posEnd){
+            return null;
+        }
+        int arr=pos[posEnd];
+        int index=map.get(arr);
+        Node node=new Node(arr);
+        node.left=posToTree(pos,posStart,posStart+index-midStart-1,mid,midStart,index-1,map);
+        node.right=posToTree(pos,posStart+index-midStart,posEnd-1,mid,index+1,midEnd,map);
+        return node;
+    }
+    public static void main(String[] args) {
+        int[] pos=new int[]{4,5,2,6,7,3,1};
+        int[] in=new int[]{4,2,5,1,6,3,7};
+        InPosToTree test=new InPosToTree();
+        Node head=test.inPosToTree(in,pos);
+        test.pre(head);
+    }
+    public void pre(Node head){
+        if (head==null)
+            return;
+        System.out.print(head.data);
+        pre(head.left);
+        pre(head.right);
+    }
+```
+
+
+
+###### 5 中序与后序结合构成的二叉树 +1
 
 - 时间复杂度： O(n)
+
 - 思路：
+
 - 1 后序数组的最右边为树的头结点h，中序找到h，假设位置为i。
--    则中序数组中，i 左边数组就是头结点左子树的中序数组，长度为L。
--    则左子树的后序数组就是后序数组的h-L
+
+- 则中序数组中，i 左边数组就是头结点左子树的中序数组，长度为L。
+
+- 则左子树的后序数组就是后序数组的h-L
+
 - 2  用左子树的后序和中序，递归建立左子树left
+
 - 3 用右子树的后序和中序，递归建立右子树right
+
 - 4 把head和左右子树设为left和right
+
+  ```java
+  public class GetPosArray {
+      // 根据先序和中序 设置后序数组的最右边的值，
+      // 然后根据先序和中序的右子树设置后序数组，
+      // 左子树同样
+      public int[] getPostArray(int[] pre,int[] mid){
+          if(pre==null||mid==null){
+              return null;
+          }
+          int len=pre.length;
+          int[] pos=new int[len];
+          HashMap<Integer,Integer> map=new HashMap<>();
+          for (int i=0;i<mid.length;i++){
+              map.put(mid[i],i);
+          }
+          setPos(pre,0,pre.length-1,mid,0,mid.length-1,pos,pos.length-1,map);
+          return pos;
+      }
+      //从右往左依次填写数组pos
+      //posEnd为后序数组该填的位置
+      //返回值为该填的位置
+      private int setPos(int[] pre, int preStart, int preEnd, int[] mid, int midStart, int midEnd, int[] pos,
+                           int posEnd, HashMap<Integer, Integer> map) {
+  
+          if(preStart>preEnd){
+              return posEnd;
+          }
+          pos[posEnd--]=pre[preStart];
+          int index=map.get(pre[preStart]);
+          posEnd= setPos(pre,preStart+index-midStart+1,preEnd,mid,index+1,midEnd,pos,posEnd,map);
+          return setPos(pre,preStart+1,preStart+index-midStart,mid,midStart,index-1,pos,posEnd,map);
+      }
+  
+      public static void main(String[] args) {
+  
+          int[] pre=new int[]{1,2,4,5,3,6,7};
+          int[] in=new int[]{4,2,5,1,6,3,7};
+          GetPosArray arr=new GetPosArray();
+          int[] pos=arr.getPostArray(pre,in);
+          for (int i=0;i<pos.length;i++){
+              System.out.println(pos[i]);
+          }
+      }
+  }
+  
+  ```
+
+  
 
 ###### 6 通过先序和中序数组生成后序数组
 
@@ -515,7 +640,7 @@ public class IsPostArray {
 
   
 
-11 判断一个二叉树是否为二叉搜索树
+###### 11 判断一个二叉树是否为二叉搜索树
 
 leetcode 98
 
@@ -567,6 +692,74 @@ public boolean isValidBST(TreeNode root) {
         return true;
     }
 ```
+
+###### 12 通过有序数组生成平衡搜索二叉树
+
+思路 ： 数组的中间数为二叉树的头结点 ，左侧 为左子树 右侧为右子树
+
+```java
+public class GenerateBSTByOrderArr {
+    public static Node generateBST(int[] arr){
+        if(arr==null){
+            return  null;
+        }
+        return  getBst(arr,0,arr.length-1);   
+    }
+    /*
+    *@description: 使用递归生成平衡搜索二叉树
+    *@params:[arr, i, i1]
+    *@return:com.mao.tree.Node
+    *@author:Mao
+    *@date:2019/4/23 8:31
+    **/
+    private static Node getBst(int[] arr, int start, int end) {
+        if(start> end){
+            return null;
+        }
+        int mid=(start+end)/2;
+        Node node=new Node(arr[mid]);
+        node.left=getBst(arr,start,mid-1);
+        node.right=getBst(arr,mid+1,end);
+        return node;
+    }
+```
+
+
+
+###### 13 找到两个节点的最近公共祖先节点 +
+
+不懂
+
+使用后序遍历
+
+```java
+      //使用后序遍历
+        /*
+            1
+          /  \
+         2     3
+       / \    / \
+      4   5  6   7
+                /
+               8
+         */
+    public Node lowestAncestors(Node head,Node o1,Node o2){
+        if(head==null || head==o1 || head==o2){
+            return head;
+        }
+        Node left=lowestAncestors(head.left,o1,o2);
+        Node right=lowestAncestors(head.right,o1,o2);
+        if(left!=null && right!=null){
+            return head;
+        }
+        //若其中有一个为null 不为null记为node 
+        //说明node要么是o1 要么是o2 
+        //或者 是o1 和o2的最近祖先
+        return left!=null?left:right;
+    }
+```
+
+
 
 
 
@@ -1538,3 +1731,148 @@ public static Node merge(Node head1, Node head2) {
     }
 ```
 
+##### 八 动态规划
+
+###### 1 爬梯子问题 
+
+leetcode 62
+
+[参考资料](https://segmentfault.com/a/1190000016315625)
+
+[segmentfault参考](https://segmentfault.com/a/1190000016315625)
+
+只能右爬和下爬，输入各自行数和列数，输出需要多种可能性
+
+```java
+
+public class UniquePath{
+    
+    public int uniquePath(int m,int n){
+        int[][] res=new int[m-1][n-1];
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+               if(i==0 ||j==0){
+                    res[i][j]=1;
+                }else{
+                     res[i][j]=res[i-1][j]+res[i][j-1];
+                }
+            }
+        }
+        return res[m-1][n-1];
+    }
+    
+}
+```
+
+- 使用递归方式 保存已有信息（记忆化搜索）
+
+```java
+public class UniquePath{
+  
+     public int uniquePaths(int m, int n) {
+        int[][] memo=new int[m][n];
+        return dfs(m-1,n-1,memo);
+    }
+    public int dfs(int m,int n,int[][] memo){
+        if(memo[m][n]!=0){
+            return memo[m][n];
+        }
+        if( m==0 || n==0){
+            return 1;
+        }
+        memo[m][n]=dfs(m-1,n,memo)+dfs(m,n-1,memo);
+        return memo[m][n];
+    }
+}
+```
+
+###### 1.1 爬梯子问题2 
+
+leetcode 70
+
+题目描述： 有n阶台阶 可以爬一阶，也可以爬2阶，计算有多少不同方法
+
+与斐波那契数方法一致
+
+###### 2 斐波那契数
+
+Leetcode 509
+
+- 使用递归
+
+```java
+ public int fib(int n){
+        int[] memo=new int[n+1];
+        return  cal(n,memo);
+    }
+    private  int cal(int n ,int[] memo){
+        if(n==0)
+            return 0;
+        if(n==1){
+            return 1;
+        }
+        if(memo[n]!=0){
+            return memo[n];
+        }
+        return cal(n-1,memo)+cal(n-2,memo);
+    }
+
+    public static void main(String[] args) {
+        Fibonacci sol=new Fibonacci();
+        System.out.println(sol.fib(4));
+    }
+```
+
+###### 3 0-1背包问题
+
+###### 4 股票问题
+
+leetcode 121  Best Time to Buy and Sell Stock
+
+```java
+ //暴力破解 时间复杂度为O(n2)
+    public int maxProfit(int[] prices) {
+        int max=0;
+        for(int i=0;i<prices.length;i++){
+            for (int j=i+1;j<prices.length;j++){
+                int tmp=prices[j]-prices[i];
+                if (tmp>max){
+                    max=tmp;
+                }
+
+            }
+        }
+        return max;
+    }
+    //时间复杂度为O(n)
+    public int maxProfit2(int[] prices){
+        int minPrice=Integer.MAX_VALUE; //最低价格
+        int maxPro=0;//最大利润
+        for (int i=0;i<prices.length;i++){
+            if(prices[i]<minPrice){
+                minPrice=prices[i];
+            }else if(prices[i]-minPrice>maxPro){
+                maxPro=prices[i]-minPrice;
+            }
+        }
+        return maxPro;
+    }
+    //考虑使用动态规划？？
+    public int maxProfit3(int[] prices) {
+        if(prices.length == 0 || prices.length == 1) return 0;
+
+        int maxProfit = 0;
+        int min = prices[0];
+
+        for(int i = 0; i < prices.length; i++) {
+            min = Math.min(min, prices[i]);
+            maxProfit = Math.max(maxProfit, prices[i] - min);
+        }
+
+        return maxProfit;
+    }
+```
+
+###### 5 股票问题2
+
+[csdn参考](https://www.cnblogs.com/bianchengzhuji/p/10539083.html)
